@@ -1,0 +1,200 @@
+Version 3.4.12-110  - October 2015
+  - Fixed multilun issue that would occur during multipath installations.
+  - Cleaned up driver rmmod issue.
+Version 3.4.10-120  - June 2015
+  - Adds in sysfs entry for manipulating controller lockup behavior: 
+      0 -- default, fail commands and disable device, 
+      1 -- panic, 
+      2 -- reset server
+  - Updates to abort code.
+  - Added notes below for Ubuntu compiles.
+Version 3.4.8-140  - March 2015
+  - Improvements made to abort and reset handling.
+  - Improvements made to HBA mode support.
+Version 3.4.6-170  - September 2014
+  - Update to address a device discovery issue (mostly involving
+    tape drives) that was found in hpsa version 3.4.6-165.
+Version 3.4.6-165  - September 2014
+  - Driver updated to support HP Proliant Gen9 servers with new Smart Array
+    and Smart HBA controllers.
+  - Many changes to support HBA mode on these new controllers.
+  - Driver updates to increase performance especially for SSDs.
+  - **NOTE** This version has a known device discovery issue (mostly involving
+    tape drives) that will be addresses in the 3.4.6-170.
+Version 3.4.4-126  - July 2014
+  - Cleaned up memory leak that would occur at device discovery.
+Version 3.4.4-125  - January 2014
+  - Added HP SSD Smart Path feature.
+    http://h18004.www1.hp.com/products/servers/proliantstorage/software-management/smartpath/index.html
+  - Updated controller support.
+Version 3.4.2-5  - October 2013
+  - Fixed chatty debug messages when running hpsa and HP agents.
+Version 3.4.2-4  - September 2013
+  - Additional Smart Array Controller support.
+  - With this version log messages can be chatty if you are running the Hp 
+    agents.  This will be fixed shortly.
+Version 3.2.0-3  - March 2013
+  - Update to Smart Array controller IDs.
+  - Added driver parameter (hpsa.reply_queues=4) to allow tuning of reply 
+    queues. Default is 4 with a max of 16.
+  - Fixed command status return necessary to avoid data inconsistency typically
+    in a multipath environment.
+Version 3.1.0-7
+  - Fixed command status return necessary to avoid data inconsistency.
+    Typically found in multipath configurations.
+Version 3.1.0-5
+  - Fixed device reset value to avoid reset failure.
+Version 3.1.0-4
+  - Added multiple reply queue support to driver.
+
+Smart Array controllers are broken into generation groups to indicate driver
+support for a given kernel/OS.
+
+  Generation9 includes controllers available for Proliant Gen9 servers
+  EX. (Px4x) - SA_CONTROLLERS_GEN9
+    HP Smart HBA Controller H241
+    HP Smart HBA Controller H240
+    HP Smart Array Controller P440
+    HP Smart Array Controller P841
+    ...
+
+  Generation8+ includes controllers available for Proliant Gen8 servers
+  EX. (Px3x) - SA_CONTROLLERS_GEN8_5
+    HP Smart Array Controller P430
+    HP Smart Array Controller P431
+    ...
+
+  Generation8 includes controllers available with Proliant Gen8 servers
+  EX. (Px2x) - SA_CONTROLLERS_GEN8
+    HP Smart Array Controller P222
+    HP Smart Array Controller P420
+    HP Smart Array Controller P421
+    HP Smart Array Controller P822
+    ...
+
+  Generation6 includes controllers available with Proliant G6 and G7 servers.
+  EX. (Px1x) - SA_CONTROLLERS_GEN6
+    HP Smart Array Controller P212
+    HP Smart Array Controller P410
+    HP Smart Array Controller P411
+    HP Smart Array Controller P812
+    ...
+
+  Legacy Generation includes controllers available for Proliant servers prior to
+  G6.
+  EX. (Px0x) - SA_CONTROLLERS_LEGACY
+    HP Smart Array Controller P200
+    HP Smart Array Controller P400
+    HP Smart Array Controller P800
+    ...
+
+
+What source/driver to use and build steps:
+
+  Ubuntu 12.04 & 14.04 LTS
+  Kernels 3.2 and greater,
+    SA Generations: SA_CONTROLLERS_GEN9 SA_CONTROLLERS_GEN8*
+                    SA_CONTROLLERS_GEN6 
+    Driver SRC:  hpsa src 3.4.10-120 or greater.
+
+       TO BUILD:
+       tar jxf hpsa-<version>.tar.bz2
+       cd hpsa-<version>/driver/scsi
+       # Defaults are fine for kernels 3.11 and greater
+       # For 3.2 - 3.8, change the following.
+       #
+       # Index: hpsa_kernel_compat.h
+       # =====================================================
+       # --- hpsa_kernel_compat.h        (revision 279)
+       # +++ hpsa_kernel_compat.h        (working copy)
+       # @@ -240,8 +240,8 @@
+       #  #define PMC_CONTROLLERS_GEN1 1
+       #  
+       #  #else /* ... else Default, kernel.org */
+       # -#define KFEATURE_HAS_WAIT_FOR_COMPLETION_IO_TIMEOUT 1
+       # -#define KFEATURE_HAS_WAIT_FOR_COMPLETION_IO 1
+       # +#define KFEATURE_HAS_WAIT_FOR_COMPLETION_IO_TIMEOUT 0
+       # +#define KFEATURE_HAS_WAIT_FOR_COMPLETION_IO 0
+       #  #define KFEATURE_HAS_2011_03_INTERRUPT_HANDLER 1
+       #  #define KFEATURE_CHANGE_QDEPTH_HAS_REASON 1
+       #  #define KFEATURE_HAS_2011_03_STYLE_DEVICE_ATTR 1
+       make
+
+  Red Hat Enterprise Linux 7.x,
+  Kernels 3.10 and greater,
+  Kernel.org latest:
+    SA Generations: SA_CONTROLLERS_GEN9 SA_CONTROLLERS_GEN8*
+                    SA_CONTROLLERS_GEN6 
+    Driver SRC:  hpsa src 3.4.10-120 or greater.
+
+       TO BUILD:
+       tar jxf hpsa-<version>.tar.bz2
+       cd hpsa-<version>/driver/scsi
+       # Uncomment "#define" for the OS being built on in hpsa_kernel_compat.h
+       make
+
+  SUSE Enterprise Linux 12 and greater,
+  Kernels 3.12 and greater,
+  Kernel.org latest:
+    SA Generations: SA_CONTROLLERS_GEN9 SA_CONTROLLERS_GEN8*
+                    SA_CONTROLLERS_GEN6 
+    Driver SRC:  hpsa src 3.4.10-120 or greater.
+
+       TO BUILD:
+       tar jxf hpsa-<version>.tar.bz2
+       cd hpsa-<version>/driver/scsi
+       # Uncomment "#define" for the OS being built on in hpsa_kernel_compat.h
+       make
+
+  Red Hat Enterprise Linux 6.x,
+  Kernels 2.6.32 and greater,
+  Kernel.org latest:
+    SA Generations: SA_CONTROLLERS_GEN8 SA_CONTROLLERS_GEN6 
+    Driver SRC:  hpsa src 3.0.0-8 or greater.
+
+       TO BUILD:
+       tar jxf hpsa-<version>.tar.bz2
+       cd hpsa-<version>/driver/scsi
+       # Uncomment "#define" for the OS being built on in hpsa_kernel_compat.h
+       make
+  
+    SA Generations: SA_CONTROLLERS_LEGACY
+    Driver SRC:  cciss src 4.6.28-20 or greater.
+
+       TO BUILD:
+       tar jxf cciss-<version>.tar.bz2
+       cd cciss-<version>
+       cp include/cciss_ioctl.h /usr/src/<kerneldir>.../include/linux
+       cp include/cciss_defs.h  /usr/src/<kerneldir>.../include/linux
+       cd driver/block
+       # Uncomment "#define" for the OS being built on in cciss_kernel_compat.h
+       make
+
+  SUSE Enterprise Linux 11sp1 and greater,
+  Kernels 2.6.32 and greater:
+    SA Generations: SA_CONTROLLERS_GEN8 
+    Driver SRC:  hpsa src 3.0.0-8 or greater.
+
+       TO BUILD:
+       tar jxf hpsa-<version>.tar.bz2
+       cd hpsa-<version>/driver/scsi
+       # Uncomment "#define" for the OS being built on in hpsa_kernel_compat.h
+       make
+
+    SA Generations: SA_CONTROLLERS_GEN6 SA_CONTROLLERS_LEGACY
+    Driver SRC:  cciss src 4.6.28-20 or greater.
+
+       TO BUILD:
+       tar jxf cciss-<version>.tar.bz2
+       cd cciss-<version>
+       cp include/cciss_ioctl.h /usr/src/<kerneldir>.../include/linux
+       cp include/cciss_defs.h  /usr/src/<kerneldir>.../include/linux
+       cd driver/block
+       # Uncomment "#define" for the OS being built on in cciss_kernel_compat.h
+       make
+
+
+To provide kernel/driver development feedback, send email to 
+storagedev@pmcs.com.
+License: GPLv2
+June 2015
