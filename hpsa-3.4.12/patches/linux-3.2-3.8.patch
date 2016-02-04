@@ -1,0 +1,13 @@
+--- a/drivers/scsi/hpsa_kernel_compat.h
++++ b/drivers/scsi/hpsa_kernel_compat.h
+@@ -240,8 +240,8 @@
+ #define PMC_CONTROLLERS_GEN1 1
+ 
+ #else /* ... else Default, kernel.org */
+-#define KFEATURE_HAS_WAIT_FOR_COMPLETION_IO_TIMEOUT 1
+-#define KFEATURE_HAS_WAIT_FOR_COMPLETION_IO 1
++#define KFEATURE_HAS_WAIT_FOR_COMPLETION_IO_TIMEOUT 0
++#define KFEATURE_HAS_WAIT_FOR_COMPLETION_IO 0
+ #define KFEATURE_HAS_2011_03_INTERRUPT_HANDLER 1
+ #define KFEATURE_CHANGE_QDEPTH_HAS_REASON 1
+ #define KFEATURE_HAS_2011_03_STYLE_DEVICE_ATTR 1
